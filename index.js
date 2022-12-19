@@ -14,8 +14,11 @@ class mainScreen extends Phaser.Scene {
 		8: '8.png',
 		9: '9.png',
 	}
-	bird
-	scoreDisplay
+	bird;
+	scoreDisplay;
+	base;
+	cursors;
+	gameStart = false
 
 	/** Load assets into RAM */
 	preload() {
@@ -24,6 +27,10 @@ class mainScreen extends Phaser.Scene {
 		this.load.image('bird2', './assets/sprites/bluebird-midflap.png')
 		this.load.image('bird3', './assets/sprites/bluebird-upflap.png')
 		this.load.image('score', './assets/sprites/0.png')
+		this.load.image('base', './assets/sprites/base.png')
+		this.load.image('gameover', './assets/sprites/gameover.png')
+		this.load.image('pipe', './assets/sprites/pipe-green.png')
+
 	}
 
 	/** Create and initialize scene components */
@@ -39,8 +46,7 @@ class mainScreen extends Phaser.Scene {
 			frameRate: 10,
 			repeat: -1
 		})
-		let bird = this.add.sprite(144, 256, 'bird1').play('bird')
-		this.scoreDisplay = this.add.image(144, 100, 'score')
+		this.bird = this.physics.add.sprite(144, 256, 'bird1').play('bird')
 		const styleText = {
 			fontFamily: 'Arial',
 			color: '#fff',
@@ -49,11 +55,27 @@ class mainScreen extends Phaser.Scene {
 		}
 		let textStart = this.add.text(80, 140, 'Touch to start', styleText)
 		textStart.setAlign('center')
+		this.base = this.add.tileSprite(168,456,336,112,'base')
+		this.cursors = this.input.keyboard.createCursorKeys();
+		this.physics.add.collider(this.bird, this.base)
+		this.bird.setBounce(0.2);
+	    this.bird.setCollideWorldBounds(true);
+		this.bird.body.allowGravity = false
 	}
 
 	/** runs in a loop, used to check for input changes */
 	update() {
-
+		if(this.gameStart){
+			this.bird.body.allowGravity = false
+		}
+		else {
+			this.bird.body.allowGravity = true
+		}
+		this.base.tilePositionX += 2
+		if (this.cursors.space.isDown){
+			this.bird.body.allowGravity = true
+			this.bird.setVelocityY(-160)
+		}
 	}
 }
 
