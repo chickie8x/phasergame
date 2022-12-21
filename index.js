@@ -15,6 +15,9 @@ class mainScreen extends Phaser.Scene {
 		9: '9.png',
 	}
 
+	gameOver = false
+
+
 	/** Load assets into RAM */
 	preload() {
 		this.load.image('background', './assets/sprites/background-day.png')
@@ -43,7 +46,14 @@ class mainScreen extends Phaser.Scene {
 		this.bird = this.physics.add.sprite(144, 256, 'bird1').play('bird')
 		this.bird.body.allowGravity = false
 		this.bird.setCollideWorldBounds(true);
-		this.bird.setBounce(0.2)
+		this.bird.setBounce(0.3)
+
+		this.base = this.add.tileSprite(148, 456, 336,112, 'base');
+		this.physics.add.existing(this.base, true);
+    	this.physics.add.collider(this.bird, this.base, function(_bird, _base){
+			
+		});
+
 		const styleText = {
 			fontFamily: 'Arial',
 			color: '#fff',
@@ -51,10 +61,7 @@ class mainScreen extends Phaser.Scene {
 			fontSize: '20px'
 		}
 		this.textStart = this.add.text(80, 140, 'Touch to start', styleText)
-		this.textStart.setAlign('center')
-		this.base = this.physics.add.staticGroup();
-		this.base = this.add.tileSprite(168, 456, 336, 112, 'base');
-		console.log(this.base)
+		this.textStart.setAlign('center')	
 		this.keyPress = this.input.keyboard.on('keydown', function (event) {
 			if (event.code === 'Space') {
 				this.scene.bird.body.allowGravity = true
@@ -71,6 +78,7 @@ class mainScreen extends Phaser.Scene {
 	}
 }
 
+// @ts-ignore
 var config = {
 	type: Phaser.AUTO,
 	willReadFrequently: true,
