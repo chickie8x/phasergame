@@ -16,6 +16,7 @@ class mainScreen extends Phaser.Scene {
 	}
 
 	gameOver = false
+	birdAnim
 
 
 	/** Load assets into RAM */
@@ -33,7 +34,7 @@ class mainScreen extends Phaser.Scene {
 	/** Create and initialize scene components */
 	create() {
 		this.add.image(144, 256, 'background')
-		this.anims.create({
+		this.birdAnim = this.anims.create({
 			key: 'bird',
 			frames: [
 				{ key: 'bird1' },
@@ -51,8 +52,13 @@ class mainScreen extends Phaser.Scene {
 		this.base = this.add.tileSprite(148, 456, 336,112, 'base');
 		this.physics.add.existing(this.base, true);
     	this.physics.add.collider(this.bird, this.base, function(_bird, _base){
-			
+			game.scene.scenes[0].gameOver = true
+			if(game.scene.scenes[0].birdAnim){
+				game.scene.scenes[0].birdAnim.pause()
+			}
 		});
+
+		console.log(game)
 
 		const styleText = {
 			fontFamily: 'Arial',
@@ -74,7 +80,18 @@ class mainScreen extends Phaser.Scene {
 
 	/** runs in a loop, used to check for input changes */
 	update() {
-		this.base.tilePositionX += 2
+		if(!this.gameOver){
+			this.base.tilePositionX += 2
+		}
+		else {
+			this.add.text(80, 140, 'Game Over!', {
+				fontFamily: 'Arial',
+				color: '#fff',
+				fontSize: '20px'
+				})
+			// this.physics.pause() 
+		}
+		
 	}
 }
 
