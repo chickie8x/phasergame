@@ -29,6 +29,7 @@ class mainScreen extends Phaser.Scene {
 		this.load.image('base', './assets/sprites/base.png')
 		this.load.image('gameover', './assets/sprites/gameover.png')
 		this.load.image('pipe', './assets/sprites/pipe-green.png')
+		this.load.image('gameover','./assets/sprites/gameover.png' )
 	}
 
 	/** Create and initialize scene components */
@@ -67,13 +68,33 @@ class mainScreen extends Phaser.Scene {
 			fontSize: '20px'
 		}
 		this.textStart = this.add.text(80, 140, 'Touch to start', styleText)
-		this.textStart.setAlign('center')	
+		this.textStart.setAlign('center')
+		this.gameOverText = this.add.image(144, 144, 'gameover', )	
+		this.gameOverText.visible = false
+		this.btnRestart = this.add.text(110, 200, 'Restart', { color: '#fff' });
+		this.btnRestart.setInteractive()
+		this.btnRestart.on('pointerdown', (event) => {
+			this.gameOver = false
+			game.scene.scenes[0].birdAnim.resume()
+			this.scene.restart()
+		})
+
+		this.btnRestart.on('pointerover', (event) => {
+			this.btnRestart.setStyle({"color": "blue"})
+		})
+
+		this.btnRestart.on('pointerout', (event) => {
+			this.btnRestart.setStyle({"color": "white"})
+		})
+
+		this.btnRestart.visible = false
+
 		this.keyPress = this.input.keyboard.on('keydown', function (event) {
 			if (event.code === 'Space') {
 				this.scene.bird.body.allowGravity = true
-				this.scene.bird.body.velocity.y = -200
+				this.scene.bird.body.velocity.y = -300
 				this.scene.gameStart = true
-				this.scene.textStart.destroy()
+				this.scene.textStart.visible = false
 			}
 		});
 	}
@@ -84,13 +105,20 @@ class mainScreen extends Phaser.Scene {
 			this.base.tilePositionX += 2
 		}
 		else {
-			this.add.text(80, 140, 'Game Over!', {
-				fontFamily: 'Arial',
-				color: '#fff',
-				fontSize: '20px'
-				})
-			// this.physics.pause() 
+			this.physics.pause()
+			this.gameOverText.visible = true
+			this.btnRestart.visible = true
 		}
+
+		if(this.bird.body.velocity.y > 0) {
+			this.bird.rotation = 0.002*this.bird.body.velocity.y
+		}
+		else{
+			this.bird.rotation = 0
+			this.bird.rotation = 0.004*this.bird.body.velocity.y
+		}
+
+
 		
 	}
 }
